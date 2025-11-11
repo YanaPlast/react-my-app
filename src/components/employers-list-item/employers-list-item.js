@@ -6,7 +6,7 @@ class EmployersListItem  extends Component {
     super(props);
     this.state = {
       increase: false,
-      isLike: false,
+      rise: false,
       
     }
   }
@@ -18,22 +18,22 @@ class EmployersListItem  extends Component {
   }
 
   changeLikeState = () => {
-    this.setState(({isLike}) => ({
-      isLike: !isLike,
+    this.setState(({rise}) => ({
+      rise: !rise,
     }))
   }
  
  render () {
   const  {name, salary, onDelete} = this.props;
   const {increase} = this.state; // инкриз приходит не из пропса, а зависит от состояния
-  const {isLike} = this.state; // деструктуризируем стейт и вытаскиваем из него  isLike
+  const {rise} = this.state; // деструктуризируем стейт и вытаскиваем из него  rise (инфо о повышении)
 
   let classNames = "list-group-item d-flex justify-content-between";
   if(increase) {
     classNames = classNames + ' increase'
   }
 
-  if(isLike) {
+  if(rise) {
     classNames  = classNames + ' like'
   }
 

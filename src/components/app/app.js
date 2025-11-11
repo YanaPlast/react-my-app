@@ -114,6 +114,7 @@ class App extends Component {
             id: newId,
             name,
             salary,
+            increase: false
         }
 
         this.setState(({data}) => {
