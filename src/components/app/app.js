@@ -5,6 +5,7 @@ import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
 import EmployersList from '../employers-list/employers-list';
 import EmployersAddForm from '../employers-add-form/employers-add-form';
+import { v4 as uuidv4 } from 'uuid';
 
 
 // function WhoAmI (props) {
@@ -105,6 +106,24 @@ class App extends Component {
         })
     }
 
+    addItem = (e, name, salary) => {
+        e.preventDefault();
+        const newId = uuidv4();
+
+        const newItem = {
+            id: newId,
+            name,
+            salary,
+        }
+
+        this.setState(({data}) => {
+            return {
+                data: [...data, newItem]
+            }
+        })
+
+    }
+
     render() {
         return ( 
             <div className="app">
@@ -119,7 +138,7 @@ class App extends Component {
                     data={this.state.data}
                     onDelete={this.deleteItem}
                 />
-                <EmployersAddForm />
+                <EmployersAddForm onAdd={this.addItem}/>
 
                 <WhoAmI name="Albert" surname='Planck' link='#'/> 
                 <WhoAmI name='Albertina' surname='Linden' link='#'/>
