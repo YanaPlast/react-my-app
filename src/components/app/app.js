@@ -1,3 +1,4 @@
+import { Component } from 'react';
 import './app.css';
 import AppInfo from '../app-info/app-info';
 import SearchPanel from '../search-panel/search-panel';
@@ -5,7 +6,6 @@ import AppFilter from '../app-filter/app-filter';
 import EmployersList from '../employers-list/employers-list';
 import EmployersAddForm from '../employers-add-form/employers-add-form';
 
-import { Component} from 'react';
 
 // function WhoAmI (props) {
 //     return (
@@ -69,29 +69,64 @@ class WhoAmI extends Component  {
 
 }
 
-function App() {
+class App extends Component {
 
-    const data = [
-        {name: 'Alex C.',  salary: 800, increase: false},
-        {name: 'Mark M.',  salary: 3000, increase: true},
-        {name: 'Frank L.',  salary: 5000, increase: true},
-    ]
-    return (
-        <div className="app">
-            <AppInfo/>
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                {id: 1, name: 'Alex C.',  salary: 800, increase: false},
+                {id: 2, name: 'Mark M.',  salary: 3000, increase: true},
+                {id: 3, name: 'Frank L.',  salary: 5000, increase: true},
+            ]
+        }
+    }
 
-            <div className="search-panel">
-                <SearchPanel />
-                <AppFilter />
-            </div>
+    deleteItem = (id) => {
+        this.setState(({data}) => {
+            //const index = data.findIndex(elem => elem.id === id );
+            // далее мы могли бы удалить этот элемент из state, но мы не можем мутировать стейт 
+            // поэтому создаем новый массив, который будет содержать все элементы старого, но без удаленного. То есть изначальный объект сохраняем невридимым
+
+            //ПЕРВЫЙ спосб удалить - громоздкий
+            //const before = data.slice(0, index); // часть массива до удаляемого элемента/ Slice - копирует, возвращает НОВЫЙ массив, копируя указанный диапазон элементов исходного массива.
+            //const after = data.slice(index + 1, ); // часть массива от элемента, следующего за удаляемым и до конца массива
+
+            //const newArr = [...before, ...after];
+
+            //ВТОРОЙ способ удалить с сохранением иммутабельности (покороче)
+
+            const newArr = data.filter(item => item.id !== id);
+
+            return {
+                data: newArr
+            }
             
-            <EmployersList data={data}/>
-            <EmployersAddForm />
+        })
+    }
 
-            <WhoAmI name="Albert" surname='Planck' link='#'/> 
-            <WhoAmI name='Albertina' surname='Linden' link='#'/>
-        </div>
-    )
+    render() {
+        return ( 
+            <div className="app">
+                <AppInfo/>
+
+                <div className="search-panel">
+                    <SearchPanel />
+                    <AppFilter />
+                </div>
+                
+                <EmployersList 
+                    data={this.state.data}
+                    onDelete={this.deleteItem}
+                />
+                <EmployersAddForm />
+
+                <WhoAmI name="Albert" surname='Planck' link='#'/> 
+                <WhoAmI name='Albertina' surname='Linden' link='#'/>
+            </div>        
+        )
+    }
+
 }
 
 export default App;
