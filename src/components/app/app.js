@@ -56,23 +56,27 @@ class App extends Component {
         })
     }
 
-    addItem = (e, name, salary) => {
+    addItem = (e, name, salary, form) => {
         e.preventDefault();
-        const newId = uuidv4();
+        
+        if(name.trim().length > 3 && salary.trim().length > 3) {
 
-        const newItem = {
-            id: newId,
-            name,
-            salary,
-            increase: false,
-            rise: false
-        }
+            const newId = uuidv4();
 
-        this.setState(({data}) => {
-            return {
-                data: [...data, newItem]
+            const newItem = {
+                id: newId,
+                name,
+                salary,
+                increase: false,
+                rise: false
             }
-        })
+
+            this.setState(({data}) => {
+                return {
+                    data: [...data, newItem]
+                }
+            })
+        }
 
     }
 
