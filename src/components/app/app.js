@@ -20,65 +20,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 //Переделываем на классовый компонент
 
-class WhoAmI extends Component  {
-
-    constructor(props) {
-        super(props);  
-        this.state = {
-            years: 27,
-            text: '+++',
-            position: '',
-        }
-        this.nextYear = this.nextYear.bind(this)
-    }
-
-    nextYear() {
-        console.log('+++');
-        this.setState(state => (
-            {years: state.years + 1}
-        )) // то, что мы тут обернули всё ещё в круглые скобки - это сокращенный синтаксис return, то есть выражение в скобках возвращает значение
-    } // тут мы возвращаем объект-состояния. this убирается!
-
-    commitInputChanges = (e, color) => {
-        console.log(color)
-        this.setState({
-            position: e.target.value
-        })
-    }
-
-    render() {
-        const {name, surname, link } = this.props;
-        const {position, years} = this.state;
-
-        return (
-            <div>
-                <button onClick={this.nextYear}>{this.state.text}</button>
-                <h1>
-                    My name is {name}, 
-                    surname - {surname}, 
-                    age - {years},
-                    position - {position}
-                    </h1>
-                <a href={link}>Мой профиль</a>
-                <form>
-                    <span>Введите должность</span>
-                    <input type="text" onChange={(e) => this.commitInputChanges(e, 'some color')}/>
-                </form>
-            </div>
-        )
-    }
-
-}
-
 class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             data: [
-                {id: 1, name: 'Alex C.',  salary: 800, increase: false},
-                {id: 2, name: 'Mark M.',  salary: 3000, increase: true},
-                {id: 3, name: 'Frank L.',  salary: 5000, increase: true},
+                {id: 1, name: 'Alex C.',  salary: 800, increase: false, rise: true},
+                {id: 2, name: 'Mark M.',  salary: 3000, increase: true, rise: false},
+                {id: 3, name: 'Frank L.',  salary: 5000, increase: true, rise: false},
             ]
         }
     }
@@ -114,7 +64,8 @@ class App extends Component {
             id: newId,
             name,
             salary,
-            increase: false
+            increase: false,
+            rise: false
         }
 
         this.setState(({data}) => {
@@ -125,10 +76,42 @@ class App extends Component {
 
     }
 
+    onToggleProp = (id, prop) => {
+
+        //Громоздкий, но рабочий синтаксис
+        /*
+        this.setState(({data}) => {            
+            const index = data.findIndex(elem => elem.id === id); // получаем индекс элемента, с которым будем работать
+            const oldItem = data[index];
+            const newItem = {...oldItem, increase: !oldItem.increase};
+            const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)]; // разворачиваем ... - то есть копируем в новый объект
+
+            return {
+                data: newArr
+            }             
+        })
+        */
+       //более короткий синтаксис
+
+       this.setState(({data}) => ({
+        
+            data: data.map(item => {
+                if(item.id === id) {
+                    return {...item, [prop]: !item[prop] }
+                }
+                return item;
+            })
+       }))
+
+    }
+
     render() {
+        const employees = this.state.data.length;
+        const increased = this.state.data.filter(item => item.increase).length;
+
         return ( 
             <div className="app">
-                <AppInfo/>
+                <AppInfo employees={employees} increased={increased}/>
 
                 <div className="search-panel">
                     <SearchPanel />
@@ -138,11 +121,9 @@ class App extends Component {
                 <EmployersList 
                     data={this.state.data}
                     onDelete={this.deleteItem}
+                    onToggleProp={this.onToggleProp}
                 />
                 <EmployersAddForm onAdd={this.addItem}/>
-
-                <WhoAmI name="Albert" surname='Planck' link='#'/> 
-                <WhoAmI name='Albertina' surname='Linden' link='#'/>
             </div>        
         )
     }
