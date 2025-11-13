@@ -8,7 +8,7 @@ class SearchPanel extends Component {
         this.state = {
             term: '' //это состояние нужно поднять до компонента app
         }
-    }
+    } 
 
     onUpdateSearch = (e) => {
         const term = e.target.value;

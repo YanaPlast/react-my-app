@@ -8,16 +8,6 @@ import EmployersAddForm from '../employers-add-form/employers-add-form';
 import { v4 as uuidv4 } from 'uuid';
 
 
-// function WhoAmI (props) {
-//     return (
-//         <div>
-//             <h1>My name is {props.name()}, surname - {props.surname}</h1>
-//             <a href="{props.link}">Мой профиль</a>
-//         </div>
-//     )
-// }
-
-
 //Переделываем на классовый компонент
 
 class App extends Component {
@@ -30,7 +20,8 @@ class App extends Component {
                 {id: 2, name: 'Mark M.',  salary: 3000, increase: true, rise: false},
                 {id: 3, name: 'Frank L.',  salary: 5000, increase: true, rise: false},
             ],
-            term: '' // строчку получаем из компонента search-pannel
+            term: '', // строчку получаем из компонента search-pannel
+            filter: 'all',
         }
     }
 
@@ -121,11 +112,28 @@ class App extends Component {
         this.setState({term}) // это сокращенная запись от {term: term}
     }
 
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise)
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 1000)
+            default:
+                return items
+        }
+        //break в реакте можно не ставить
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter}) // то есть filter: filter
+    }
+
+
     render() {
-        const {data, term} = this.state;
+        const {data, term, filter} = this.state;
         const employees = this.state.data.length;
         const increased = this.state.data.filter(item => item.increase).length;
-        const visibleData = this.searchEmp(data, term);
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter); // фильтруем уже отфильтрованный по поиску массив. Т.е. конечные данные, которые мы показываем на странице проходят двойную фильтрацию
 
         return ( 
             <div className="app">
@@ -135,7 +143,10 @@ class App extends Component {
                     <SearchPanel
                         onUpdateSearch={this.onUpdateSearch}
                     />
-                    <AppFilter />
+                    <AppFilter
+                        filter={filter}
+                        onFilterSelect={this.onFilterSelect}
+                    />
                 </div>
                 
                 <EmployersList 
